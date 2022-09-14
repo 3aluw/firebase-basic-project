@@ -1,13 +1,15 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+<div class="cards-container">
+  <div class="book-card" v-for="book in books">
+   <span>{{book.title}}</span>
+   <span>{{book.author}} </span>
   </div>
+</div>
 </template>
 
 <script>
     import{ db } from "@/firebase";
-    import { collection, DocumentSnapshot, getDocs } from "@firebase/firestore";
+    import { collection, getDocs } from "@firebase/firestore";
 
 // @ is an alias to /src
 import HelloWorld from '@/components/HelloWorld.vue'
@@ -34,3 +36,17 @@ data(){
 }
 }
 </script>
+<style>
+  .cards-container{
+    display: flex;
+    gap: 1rem;
+  }
+  .book-card{
+    padding: .5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    border-radius: 5px;
+    border: 2px black solid ;
+  }
+</style>
