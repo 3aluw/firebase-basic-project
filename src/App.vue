@@ -1,7 +1,7 @@
 <template>
   <nav>
     <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+    <router-link to="/about">Add a Book</router-link>
   </nav>
   <router-view/>
 </template>
@@ -29,5 +29,15 @@ nav a {
 
 nav a.router-link-exact-active {
   color: #42b983;
+}
+button{
+  padding: 10px 30px;
+  font-size: 24px;
+  cursor: pointer;
+  
+	border-radius: 7px;
+	border-bottom-left-radius: 0;
+  
+	background-color: grey;
 }
 </style>
