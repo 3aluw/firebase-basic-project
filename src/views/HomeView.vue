@@ -2,8 +2,13 @@
 
   <nav>
     <div class="search-bar-cont">
-      
-    
+    <input @keyup.enter="searchHandler" placeholder="seacrh a book" v-model="searchedBook" @blur="showSearchList=false; searchArray = []">
+    <ul class="search-list" v-show="showSearchList">
+      <li v-for="book in searchArray">
+      <strong>{{book.title}}</strong><br>
+      <small> by: {{book.author}}</small>
+      </li>
+    </ul>
     </div>
   </nav>
 <div class="cards-container">
@@ -27,7 +32,7 @@
 
 <script>
     import{ db } from "@/firebase";
-    import { collection, getDocs, doc, deleteDoc, onSnapshot } from "@firebase/firestore";
+    import { collection, getDocs, doc, deleteDoc, onSnapshot, query, where, orderBy } from "@firebase/firestore";
 
 // @ is an alias to /src
 import HelloWorld from '@/components/HelloWorld.vue'
@@ -37,35 +42,39 @@ export default {
   components: {
     HelloWorld
   },
-  
-async beforeCreate(){
 
-  const unsub = onSnapshot(collection(db, "books"), (docs) => {
-    this.books=[];
-    console.log(docs,docs.docs)
-   docs.forEach((doc) => {
-   this.books.push({id: doc.id, ...doc.data()})
-  
-});
-});
-//getDocs function
-  /*
-  const querySnapshot = await getDocs(collection(db, "books"));
-
-querySnapshot.forEach((doc) => {
-   this.books.push({id: doc.id, ...doc.data()})
-  
-});
-console.log(this.books)*/
-},
 data(){
   return{
+    searchedBook : null,
+    searchArray:[],
+    showSearchList : false,
+
     books:[],
     bookToDelete:null,
     showAlert: false,
+    alertMessage:"",
+    
   }
 },
 methods:{
+  //querrying data
+  async searchHandler(){
+    
+   const q = query(collection(db,"books"), where("title", "==", this.searchedBook),orderBy("createdAt"));
+    const querySnapshot = await getDocs(q);
+    if(querySnapshot.docs.length){
+querySnapshot.forEach((doc) => {
+  this.showSearchList = true;
+  this.searchArray.push({...doc.data(), id: doc.id})
+  console.log(this.searchArray);
+});}
+else{
+this.showAlert = true;
+setTimeout(()=>{ this.showAlert = false},3000);
+}
+
+  },
+  //deleting data
   async deleteBook(){
     let book =   this.books.find((el)=>el.title === this.bookToDelete)
     try{ 
@@ -81,7 +90,27 @@ methods:{
  
   }
 },
+  //retriving data
+async beforeCreate(){
 
+  const unsub = onSnapshot(collection(db, "books"), (docs) => {
+    this.books=[];
+ 
+   docs.forEach((doc) => {
+   this.books.push({id: doc.id, ...doc.data()})
+  
+});
+});
+//getDocs function
+  /*
+  const querySnapshot = await getDocs(collection(db, "books"));
+
+querySnapshot.forEach((doc) => {
+   this.books.push({id: doc.id, ...doc.data()})
+  
+});
+console.log(this.books)*/
+},
 }
 </script>
 <style>
@@ -133,4 +162,30 @@ methods:{
 .v-leave-to {
   opacity: 0;
 }
+input{
+  font-size:18px;
+  padding:10px 10px 10px 5px;
+  display:block;
+  width:300px;
+  border:none;
+  border-bottom:1px solid #757575;
+}
+input:focus{
+  border: none;
+  outline: 1px dashed rgba(170, 50, 220, .6);
+border-radius: 2rem;
+}
+.search-bar-cont{
+  position: relative;
+
+}
+.search-list{
+  list-style: none;
+  position: absolute;
+  width:300px;
+  background-color: whitesmoke;
+  margin-top: 5px;
+  padding: 10px;
+}
+
 </style>
