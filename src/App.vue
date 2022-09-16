@@ -38,6 +38,6 @@ button{
 	border-radius: 7px;
 	border-bottom-left-radius: 0;
   
-	background-color: grey;
+
 }
 </style>

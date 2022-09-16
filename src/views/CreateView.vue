@@ -14,7 +14,7 @@
 </template>
 <script>
   import{db} from "@/firebase"
-  import {addDoc, collection} from "@firebase/firestore"
+  import {addDoc, collection,serverTimestamp} from "@firebase/firestore"
 
   export default {
     name:"AboutView",
@@ -30,7 +30,8 @@ showAlert : false,
         if(this.bookName && this.authorName ){
          await addDoc(collection(db,"books"),{
             title: this.bookName,
-            author: this.authorName
+            author: this.authorName,
+            createdAt: serverTimestamp(),
           })
           this.bookName = this.authorName = null
         }else{
